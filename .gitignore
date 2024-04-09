@@ -1,0 +1,53 @@
+# production
+/dist
+
+# production deploy (이건 주석 처리하면 안됨)
+/deploy.dat
+
+# development
+/@dev
+
+# upload
+/@uploads
+
+# 로그
+/@logs
+
+# OS X
+.DS_Store*
+Icon?
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+.directory
+*~
+
+
+# npm
+node_modules
+package-lock.json
+*.log
+*.gz
+
+# IntelliJ
+.idea
+
+# Coveralls
+coverage
+
+# Benchmarking
+benchmarks/graphs
+
+# dotenv
+.env
+.env.development
+.env.staging
+.env.production
+
+# eslint cache
+.eslintcache

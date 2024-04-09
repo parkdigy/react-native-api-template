@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "preserveSymlinks": true,
+    "baseUrl": "./",
+    "paths": {
+      "@common_aes256": ["src/common/aes256"],
+      "@common_aws": ["src/common/aws"],
+      "@common_big": ["src/common/Big"],
+      "@common_crypt": ["src/common/crypt"],
+      "@common_env": ["src/common/env"],
+      "@common_excel": ["src/common/excel"],
+      "@common_jwt": ["src/common/jwt"],
+      "@common_logging": ["src/common/logging"],
+      "@common_mail": ["src/common/mail"],
+      "@common_param": ["src/common/param"],
+      "@common_text": ["src/common/text"],
+      "@common_util": ["src/common/util"],
+      "@controllers": ["src/controllers"],
+      "@middlewares": ["src/middlewares"],
+      "@types": ["src/@types"],
+      "@db": ["src/db"],
+      "@db_models": ["src/db/models"],
+      "@db_models_types": ["src/db/models/@types"],
+      "@db_models_util": ["src/db/models/@util"],
+      "@db_query_common": ["src/db/query/@common"],
+    },
+    "types": ["webpack-env", "jest"],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/@types"
+    ]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
+}
