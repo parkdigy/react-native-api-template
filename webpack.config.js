@@ -24,6 +24,7 @@ module.exports = {
       '@common_param': path.resolve(__dirname, 'src/common/param'),
       '@common_text': path.resolve(__dirname, 'src/common/text'),
       '@common_util': path.resolve(__dirname, 'src/common/util'),
+      '@common_api': path.resolve(__dirname, 'src/common/api'),
       '@controllers': path.resolve(__dirname, 'src/controllers'),
       '@middlewares': path.resolve(__dirname, 'src/middlewares'),
       '@types': path.resolve(__dirname, 'src/@types'),

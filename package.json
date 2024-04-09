@@ -1,5 +1,5 @@
 {
-  "name": "ts-express-template",
+  "name": "ts-express-api-template",
   "version": "1.0.0",
   "description": "",
   "main": "src/app.ts",
@@ -20,7 +20,8 @@
     "pm2:delete": "pm2 delete ecosystem.config.js",
     "install:prod": "npm install --only=prod",
     "reinstall-module": "rm -rf node_modules && rm -f package-lock.json && npm i",
-    "test": "jest"
+    "test": "jest",
+    "git:merge-mirror": "git remote update && git merge mirror/main --no-edit"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "@pdg/util": "^1.0.20",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.6",
+    "@types/cors": "^2.8.17",
     "@types/csurf": "^1.11.5",
     "@types/ejs": "^3.1.5",
     "@types/express": "^4.17.21",
@@ -64,6 +66,7 @@
     "cookie-parser": "^1.4.6",
     "cookie-session": "^2.1.0",
     "core-js": "^3.36.0",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.10",
     "dotenv": "^16.4.5",

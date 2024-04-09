@@ -23,6 +23,7 @@
       "@common_param": ["src/common/param"],
       "@common_text": ["src/common/text"],
       "@common_util": ["src/common/util"],
+      "@common_api": ["src/common/api"],
       "@controllers": ["src/controllers"],
       "@middlewares": ["src/middlewares"],
       "@types": ["src/@types"],

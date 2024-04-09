@@ -9,7 +9,10 @@ import { NextFunction } from 'express';
 
 export default async function (req: MyRequest, res: MyResponse, next: NextFunction) {
   env.$$routerCount = (env.$$routerCount || 0) + 1;
-  ll('starter', req.method, `${req.baseUrl}${req.path}`, env.$$routerCount);
+
+  if (process.env.API_START_FINISH_LOG_SHOW === 'true') {
+    ll('starter', req.method, `${req.baseUrl}${req.path}`, env.$$routerCount);
+  }
 
   next();
 }

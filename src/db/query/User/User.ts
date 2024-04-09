@@ -28,7 +28,10 @@ export default class User extends MySqlQuery<tableName> {
    * 로그인을 위한 정보
    * ******************************************************************************************************************/
   infoForSignIn(req: MyRequest, email: string) {
-    return this.getBuilder(req).select('id', 'password', 'email').where('email', email).first();
+    return this.getBuilder(req)
+      .select('id', 'password', 'email', 'status', 'login_fail_count')
+      .where('email', email)
+      .first();
   }
 
   /********************************************************************************************************************
