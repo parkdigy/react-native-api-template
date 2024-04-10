@@ -1,4 +1,4 @@
-# ts-express-template
+# express-template
 
 ## 배포
 ```
