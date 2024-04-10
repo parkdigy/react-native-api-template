@@ -1,4 +1,4 @@
-# express-template
+# express-api-template
 
 ## 배포
 ```
