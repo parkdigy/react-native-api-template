@@ -2,7 +2,6 @@
  * 인증 컨트롤러
  * ******************************************************************************************************************/
 
-import { MyRequest, MyResponse } from '@types';
 import { Param_Email_Required, Param_Password_Required } from '@common_param';
 
 export default {
