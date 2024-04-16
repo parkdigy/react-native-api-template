@@ -5,8 +5,6 @@
  * - finisher 로그 출력
  * ******************************************************************************************************************/
 
-import { MyRequest } from '@types';
-
 export default async function (req: MyRequest) {
   env.$$routerCount = (env.$$routerCount || 0) - 1;
   ll('finisher', req.method, `${req.baseUrl}${req.path}`, env.$$routerCount);
