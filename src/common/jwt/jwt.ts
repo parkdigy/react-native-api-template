@@ -25,11 +25,17 @@ const jwt: Jwt = {
   verify(token, options?) {
     return _jwt.verify(token, process.env.APP_KEY, options) as JwtPayload;
   },
-
   /********************************************************************************************************************
    * JWT 토큰 저장
    * ******************************************************************************************************************/
-  saveAccessToken(req, res, userId, expireDays = Number(ifEmpty(process.env.AUTH_JWT_TOKEN_EXPIRES_DAYS, '-1'))) {
+  saveAccessToken(
+    req,
+    res,
+    userKey,
+    loginType,
+    loginKey,
+    expireDays = Number(ifEmpty(process.env.AUTH_JWT_TOKEN_EXPIRES_DAYS, '-1'))
+  ) {
     const jwtOptions: SignOptions = {};
     if (expireDays > -1) {
       jwtOptions.expiresIn = `${expireDays}d`;
@@ -38,7 +44,9 @@ const jwt: Jwt = {
       dt: dayjs().format('YYYYMMDDHHmmss'),
       ua: this.useUserAgent ? req.get('User-Agent') : null,
       ip: this.useIpAddress ? req.$$remoteIpAddress : null,
-      id: userId,
+      key: userKey,
+      ltype: loginType,
+      lkey: loginKey,
       ed: expireDays,
     };
     const payload: JwtPayload = { key: crypt.enc(JSON.stringify(payloadData)) };
@@ -58,8 +66,10 @@ const jwt: Jwt = {
    * JWT 토큰 검증
    * ******************************************************************************************************************/
   verifyAccessToken(req) {
-    let userId: number | undefined;
-    let expireDays: number | undefined;
+    let userKey: string | undefined = undefined;
+    let loginType: string | undefined = undefined;
+    let loginKey: string | undefined = undefined;
+    let expireDays: number | undefined = undefined;
     try {
       const token = req.cookies[this.cookieName];
       if (token) {
@@ -67,18 +77,20 @@ const jwt: Jwt = {
         const payload = crypt.dec(key);
         const payloadData = JSON.parse(payload);
 
-        userId = payloadData.id;
+        userKey = payloadData.key;
+        loginType = payloadData.ltype;
+        loginKey = payloadData.lkey;
         expireDays = payloadData.ed;
 
-        if (userId && this.useUserAgent) {
+        if (userKey && this.useUserAgent) {
           if (payloadData.ua !== req.get('User-Agent')) {
-            userId = undefined;
+            userKey = undefined;
             expireDays = undefined;
           }
         }
-        if (userId && this.useIpAddress) {
+        if (userKey && this.useIpAddress) {
           if (payloadData.ip !== req.$$remoteIpAddress) {
-            userId = undefined;
+            userKey = undefined;
             expireDays = undefined;
           }
         }
@@ -86,7 +98,7 @@ const jwt: Jwt = {
     } catch (err) {
       ll(err);
     }
-    return { userId, expireDays };
+    return { userKey, loginType, loginKey, expireDays };
   },
 
   /********************************************************************************************************************

@@ -12,6 +12,8 @@ import Finisher from './Finisher';
 import Logger from './Logger';
 import { MyController } from '@types';
 import { NextFunction, RequestHandler } from 'express';
+import CommonLogging from '@common_logging';
+import { ApiError } from '@common_api';
 
 export default function (
   controller: MyController,
@@ -54,6 +56,14 @@ export default function (
           await handleException(err as Error);
         }
       } catch (err) {
+        const isApiError = err instanceof ApiError;
+        if (!isApiError || (isApiError && err.getCode() >= 99998)) {
+          CommonLogging.err(
+            `${req.$$remoteIpAddress} ${req.method} ${util.url.join(req.baseUrl, req.url)}`,
+            (err as Error).toString()
+          );
+        }
+
         await handleException(err as Error);
       }
 

@@ -1,4 +1,7 @@
 export interface Env {
   $$routerCount: number;
-  isLocal(): boolean;
+  isLocal: boolean;
+  isDevelopment: boolean;
+  isStaging: boolean;
+  isProduction: boolean;
 }

@@ -10,7 +10,19 @@ export interface Jwt {
   useIpAddress: boolean;
   sign(payload: string | Buffer | object, options?: SignOptions): string;
   verify(token: string, options?: VerifyOptions): JwtPayload;
-  saveAccessToken(req: MyRequest, res: MyResponse, userId: number, expireDays?: number): void;
-  verifyAccessToken(req: MyRequest): { userId: number | undefined; expireDays: number | undefined };
+  saveAccessToken(
+    req: MyRequest,
+    res: MyResponse,
+    userKey: string,
+    loginType: string,
+    loginKey: string,
+    expireDays?: number
+  ): void;
+  verifyAccessToken(req: MyRequest): {
+    userKey: string | undefined;
+    loginType: string | undefined;
+    loginKey: string | undefined;
+    expireDays: number | undefined;
+  };
   clearAccessToken(res: MyResponse): void;
 }

@@ -19,6 +19,17 @@ const Error = {
   Unauthorized: new ApiError(401, 99997),
   Permission: new ApiError(403, 99996, '사용 권한이 없습니다'),
   NoDataChanged: new ApiError(400, 99995, '변경된 정보가 없습니다.'),
+  //
+  auth: {
+    signIn: {
+      invalidSnsToken: new ApiError(500, 1000, '잘못된 SNS 로그인 정보입니다.'),
+    },
+  },
+  my: {
+    resign: {
+      alreadyResign: new ApiError(500, 1000, '이미 탈퇴된 계정입니다.'),
+    },
+  },
 };
 
 function getReplacedMsg(msg?: ApiMsg): ApiFinalMsg | undefined {
@@ -132,7 +143,7 @@ const api = {
         result: error.getResult(),
       });
     } else {
-      res.status(Error.Exception.getStatus()).send(Error.Exception.getResult(error.toString()));
+      res.status(Error.Exception.getStatus()).send({ result: Error.Exception.getResult(error.toString()) });
     }
   },
 };

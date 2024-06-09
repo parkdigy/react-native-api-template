@@ -7,12 +7,10 @@ import { Env } from './env.types';
 const env: Env = {
   $$routerCount: 0,
 
-  /********************************************************************************************************************
-   * 개발 모드가 local 인지 여부
-   * ******************************************************************************************************************/
-  isLocal() {
-    return process.env.APP_ENV === 'local';
-  },
+  isLocal: process.env.APP_ENV === 'local',
+  isDevelopment: process.env.APP_ENV === 'development',
+  isStaging: process.env.APP_ENV === 'staging',
+  isProduction: process.env.APP_ENV === 'production',
 };
 
 export default env;

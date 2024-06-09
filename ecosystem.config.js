@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'express-api-template',
+      name: 'react-native-api-template',
       script: './dist/app.js',
       instances: 1,
       exec_mode: 'cluster',

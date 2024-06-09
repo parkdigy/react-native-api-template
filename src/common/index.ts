@@ -8,5 +8,4 @@ export * from './env';
 export * from './param';
 export * from './mail';
 export * from './aws';
-export * from './excel';
 export * from './util';

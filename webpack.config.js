@@ -9,6 +9,9 @@ module.exports = {
   target: 'node',
   stats: isProduction,
   resolve: {
+    fallback: {
+      request: false,
+    },
     extensions: ['.js', '.ts'],
     alias: {
       '@common': path.resolve(__dirname, 'src/common'),
@@ -45,6 +48,8 @@ module.exports = {
   externals: {
     express: 'commonjs express',
     knex: 'commonjs knex',
+    farmhash: 'commonjs farmhash',
+    'steam-session': 'commonjs steam-session',
   },
   experiments: {
     topLevelAwait: true,

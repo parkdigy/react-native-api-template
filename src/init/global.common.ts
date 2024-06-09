@@ -5,8 +5,8 @@ import _env from '../common/env';
 import _util from '../common/util';
 import _param from '../common/param';
 import _mail from '../common/mail';
-import _excel from '../common/excel';
 import _jwt from '../common/jwt';
+
 import _db from '../db';
 import _api from '../common/api';
 
@@ -19,8 +19,8 @@ declare global {
   var util: typeof _util;
   var param: typeof _param;
   var mail: typeof _mail;
-  var excel: typeof _excel;
   var jwt: typeof _jwt;
+
   var db: typeof _db;
   var api: typeof _api;
 }
@@ -33,7 +33,7 @@ globalThis.env = _env;
 globalThis.util = _util;
 globalThis.param = _param;
 globalThis.mail = _mail;
-globalThis.excel = _excel;
 globalThis.jwt = _jwt;
+
 globalThis.db = _db;
 globalThis.api = _api;

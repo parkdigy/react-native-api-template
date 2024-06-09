@@ -7,22 +7,42 @@
  * ******************************************************************************************************************/
 
 import { NextFunction } from 'express';
+import CommonLogging from '@common_logging';
+import { ApiError } from '@common_api';
 
 export default async function (req: MyRequest, res: MyResponse, next: NextFunction) {
+  const handleUnauthorized = () => {
+    api.error(res, api.Error.Unauthorized);
+  };
+
   try {
-    const { userId, expireDays } = jwt.verifyAccessToken(req);
-    if (userId != null) {
-      const user = await db.User.infoForSession(req, userId);
-      if (user) {
-        req.$$user = user;
-        jwt.saveAccessToken(req, res, userId, expireDays);
+    const { userKey, loginType, loginKey } = jwt.verifyAccessToken(req);
+    if (userKey && loginType && loginKey) {
+      if (await db.UserLogin.validate(req, loginKey)) {
+        const user = await db.User.info(req, userKey);
+        if (user && user.reg_type === loginType && user.status !== db.User.Status.Resign) {
+          req.$$user = { ...user, login_key: loginKey };
+          next();
+        } else {
+          jwt.clearAccessToken(res);
+          handleUnauthorized();
+        }
       } else {
         jwt.clearAccessToken(res);
+        handleUnauthorized();
       }
+    } else {
+      handleUnauthorized();
     }
   } catch (err) {
-    //
-  }
+    const isApiError = err instanceof ApiError;
+    if (!isApiError || (isApiError && err.getCode() >= 90000)) {
+      CommonLogging.err(
+        `${req.$$remoteIpAddress} ${req.method} ${util.url.join(req.baseUrl, req.url)}`,
+        (err as Error).toString()
+      );
+    }
 
-  next();
+    handleUnauthorized();
+  }
 }

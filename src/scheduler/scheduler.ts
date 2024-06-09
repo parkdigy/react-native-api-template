@@ -1,5 +1,5 @@
-import schedule from './schedule';
-import { TestJob } from './Jobs';
+// import schedule from './schedule';
+// import { TestJob } from './Jobs';
 import { Scheduler } from './scheduler.types';
 
 const scheduler: Scheduler = {
@@ -11,9 +11,8 @@ const scheduler: Scheduler = {
     });
     this.$jobs = [];
     if (process.env.APP_ENV !== 'local') {
-      ll('job start');
-
-      this.$jobs.push(schedule.minutely(new TestJob()));
+      // ll('job start');
+      // this.$jobs.push(schedule.minutely(new TestJob()));
     }
   },
 };

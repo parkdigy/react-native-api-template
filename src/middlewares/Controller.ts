@@ -12,6 +12,8 @@ import Finisher from './Finisher';
 import SessionAuthChecker from './JwtCookieAuthChecker';
 import { MyController } from '@types';
 import { NextFunction, RequestHandler } from 'express';
+import CommonLogging from '@common_logging';
+import { ApiError } from '@common_api';
 
 export default function (
   controller: MyController,
@@ -28,6 +30,14 @@ export default function (
         await db.trans.commitAll(req);
       } catch (err) {
         await db.trans.rollbackAll(req);
+
+        const isApiError = err instanceof ApiError;
+        if (!isApiError || (isApiError && err.getCode() >= 90000)) {
+          CommonLogging.err(
+            `${req.$$remoteIpAddress} ${req.method} ${util.url.join(req.baseUrl, req.url)}`,
+            (err as Error).toString()
+          );
+        }
 
         res.send((err as Error).toString());
       }

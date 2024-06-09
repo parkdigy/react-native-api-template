@@ -26,8 +26,6 @@ declare namespace NodeJS {
     APP_SECURE_KEY_PATH: string;
     // HTTPS 인증서 cert.pem 파일 경로
     APP_SECURE_CERT_PATH: string;
-    // HTTPS 인증서 ca.pem 파일 경로
-    APP_SECURE_CA_PATH: string;
 
     // API 시작/종료 로그 표시 여부
     API_START_FINISH_LOG_SHOW: EnvBoolean;
@@ -116,5 +114,15 @@ declare namespace NodeJS {
     DEPLOY_GITHUB_SECRET: string;
     // GitHub Actions 배포 브랜치
     DEPLOY_GITHUB_REF: string;
+
+    // 카카오 API KEY
+    KAKAO_API_KEY: string;
+    // 카카오 API SECRET
+    KAKAO_API_SECRET: string;
+
+    // 네이버 API KEY
+    NAVER_API_KEY: string;
+    // 네이버 API SECRET
+    NAVER_API_SECRET: string;
   }
 }

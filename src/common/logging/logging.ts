@@ -85,12 +85,18 @@ const logging = {
    * 에러 로그 기록
    * ******************************************************************************************************************/
   err(text: string, data?: any) {
+    if (process.env.APP_ENV !== 'local') {
+      util.slack.sendServerErrorAlarm([text, dataLogValue(data)]);
+    }
     logger.error(`${text}${dataLogValue(data)}`);
   },
   /********************************************************************************************************************
    * 에러 로그 기록
    * ******************************************************************************************************************/
   error(text: string, data?: any) {
+    if (process.env.APP_ENV !== 'local') {
+      util.slack.sendServerErrorAlarm([text, dataLogValue(data)]);
+    }
     logger.error(`${text}${dataLogValue(data)}`);
   },
 };

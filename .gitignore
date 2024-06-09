@@ -65,3 +65,6 @@ benchmarks/graphs
 
 # eslint cache
 .eslintcache
+
+#firebase key
+.firebase-admin-key.json
