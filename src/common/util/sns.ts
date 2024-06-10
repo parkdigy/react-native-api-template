@@ -22,13 +22,13 @@ export default {
         },
       });
 
-      if (!axiosRes.data || !axiosRes.data.id || !axiosRes.data.kakao_account) {
+      if (!axiosRes.data || !axiosRes.data.id) {
         throw api.newExceptionError();
       }
 
       const id = `${axiosRes.data.id}`;
-      const email: string | undefined = axiosRes.data.kakao_account.email;
-      const nickname: string | undefined = axiosRes.data.kakao_account.profile?.nickname;
+      const email: string | undefined = axiosRes.data.kakao_account?.email;
+      const nickname: string | undefined = axiosRes.data.kakao_account?.profile?.nickname;
 
       return { id, email, nickname };
     } catch (err) {
