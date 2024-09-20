@@ -3,7 +3,6 @@
  * ******************************************************************************************************************/
 
 import crypto from 'crypto';
-import { Aes256 } from './aes256.types';
 
 const CIPHER_ALGORITHM = 'aes-256-ctr';
 
@@ -84,7 +83,7 @@ function decrypt(key: string, encrypted: string | Buffer): string | Buffer {
   }
 }
 
-const aes256: Aes256 = {
+const aes256 = {
   encrypt,
   decrypt,
 };

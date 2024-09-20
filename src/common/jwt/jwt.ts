@@ -2,12 +2,12 @@
  * JWT 모듈
  * ******************************************************************************************************************/
 
-import _jwt, { SignOptions } from 'jsonwebtoken';
-import { Jwt, JwtPayload } from './jwt.types';
+import _jwt, { SignOptions, VerifyOptions } from 'jsonwebtoken';
+import { JwtPayload } from './jwt.types';
 import crypt from '../crypt';
 import { CookieOptions } from 'express-serve-static-core';
 
-const jwt: Jwt = {
+const jwt = {
   cookieName: ifEmpty(process.env.AUTH_JWT_TOKEN_COOKIE_NAME, `_${process.env.PROJECT_NAME}_ajt_`), // AccessToken 저장 쿠키명
   useUserAgent: false, // 토큰 검증 시 User-Agent 사용 여부 (true 시 User-Agent 가 변경되면 인증 실패)
   useIpAddress: false, // 토큰 검증 시 IP 주소 사용 여부 (true 시 IP 주소가 변경되면 인증 실패)
@@ -15,25 +15,25 @@ const jwt: Jwt = {
   /********************************************************************************************************************
    * JWT 토큰 생성
    * ******************************************************************************************************************/
-  sign(payload, options?) {
+  sign(payload: string | Buffer | object, options?: SignOptions) {
     return _jwt.sign(payload, process.env.APP_KEY, options);
   },
 
   /********************************************************************************************************************
    * JWT 토큰 검증
    * ******************************************************************************************************************/
-  verify(token, options?) {
+  verify(token: string, options?: VerifyOptions) {
     return _jwt.verify(token, process.env.APP_KEY, options) as JwtPayload;
   },
   /********************************************************************************************************************
    * JWT 토큰 저장
    * ******************************************************************************************************************/
   saveAccessToken(
-    req,
-    res,
-    userKey,
-    loginType,
-    loginKey,
+    req: MyRequest,
+    res: MyResponse,
+    userKey: string,
+    loginType: string,
+    loginKey: string,
     expireDays = Number(ifEmpty(process.env.AUTH_JWT_TOKEN_EXPIRES_DAYS, '-1'))
   ) {
     const jwtOptions: SignOptions = {};
@@ -65,7 +65,7 @@ const jwt: Jwt = {
   /********************************************************************************************************************
    * JWT 토큰 검증
    * ******************************************************************************************************************/
-  verifyAccessToken(req) {
+  verifyAccessToken(req: MyRequest) {
     let userKey: string | undefined = undefined;
     let loginType: string | undefined = undefined;
     let loginKey: string | undefined = undefined;
@@ -104,7 +104,7 @@ const jwt: Jwt = {
   /********************************************************************************************************************
    * JWT 토큰 삭제
    * ******************************************************************************************************************/
-  clearAccessToken(res) {
+  clearAccessToken(res: MyResponse) {
     res.clearCookie(this.cookieName);
   },
 };
