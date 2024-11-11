@@ -32,14 +32,12 @@ export default class Config extends MySqlQuery<tableName> {
               ios_app_version as app_version,
               ios_app_build_number as app_build_number,
               ios_app_required_build_number as app_required_build_number,
-              ios_code_push_required_release_number as code_push_required_release_number,
               ios_market_url as market_url
             `
             : `
               aos_app_version as app_version,
               aos_app_build_number as app_build_number,
               aos_app_required_build_number as app_required_build_number,
-              aos_code_push_required_release_number as code_push_required_release_number,
               aos_market_url as market_url
             `
         )
