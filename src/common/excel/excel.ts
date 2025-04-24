@@ -433,7 +433,6 @@ const excel = {
             }
           }
 
-          ll(key);
           ws[key].s = style;
         }
       }
