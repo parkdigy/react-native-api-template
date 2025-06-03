@@ -19,7 +19,7 @@ export default async function (req: MyRequest, res: MyResponse, next: NextFuncti
         jwt.clearAccessToken(res);
       }
     }
-  } catch (err) {
+  } catch {
     //
   }
 

@@ -176,7 +176,7 @@ export default {
       const info = await FirebaseAdmin.auth().verifyIdToken(accessToken);
       const userInfo = await FirebaseAdmin.auth().getUser(info.uid);
       return { id: info.uid, email: userInfo.email, nickname: userInfo.displayName };
-    } catch (err) {
+    } catch {
       throw api.Error.Unauthorized;
     }
   },
@@ -189,7 +189,7 @@ export default {
       const info = await FirebaseAdmin.auth().verifyIdToken(accessToken);
       const userInfo = await FirebaseAdmin.auth().getUser(info.uid);
       return { id: info.uid, email: userInfo.email, nickname: userInfo.displayName };
-    } catch (err) {
+    } catch {
       throw api.Error.Unauthorized;
     }
   },

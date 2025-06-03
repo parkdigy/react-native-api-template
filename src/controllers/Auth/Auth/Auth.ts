@@ -149,7 +149,7 @@ export default {
         jwt.saveAccessToken(req, res, req.$$user.user_key, req.$$user.reg_type, req.$$user.login_key);
 
         api.success(res, await AuthMakeLoginData(req, req.$$user));
-      } catch (err) {
+      } catch {
         jwt.clearAccessToken(res);
 
         api.success(res, await AuthMakeLoginData(req));

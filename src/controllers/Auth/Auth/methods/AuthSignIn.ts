@@ -77,7 +77,7 @@ export const AuthSignIn = {
             snsAccessTokenExp = kakao_access_token_exp;
             snsRefreshToken = kakao_refresh_token;
             snsRefreshTokenExp = kakao_refresh_token_exp;
-          } catch (err) {
+          } catch {
             // 카카오 사용자 정보 조회 실패
             throw api.Error.auth.signIn.invalidSnsToken;
           }
@@ -100,7 +100,7 @@ export const AuthSignIn = {
             snsAccessToken = naver_access_token;
             snsAccessTokenExp = naver_access_token_exp;
             snsRefreshToken = naver_refresh_token;
-          } catch (err) {
+          } catch {
             // 네이버 사용자 정보 조회 실패
             throw api.Error.auth.signIn.invalidSnsToken;
           }
@@ -119,7 +119,7 @@ export const AuthSignIn = {
             email = googleUserInfo.email;
             nickname = googleUserInfo.nickname;
             snsUserId = googleUserInfo.id;
-          } catch (err) {
+          } catch {
             // 구글 사용자 정보 조회 실패
             throw api.Error.auth.signIn.invalidSnsToken;
           }
@@ -138,7 +138,7 @@ export const AuthSignIn = {
             email = appleUserInfo.email;
             nickname = appleUserInfo.nickname;
             snsUserId = appleUserInfo.id;
-          } catch (err) {
+          } catch {
             // 애플 사용자 정보 조회 실패
             throw api.Error.auth.signIn.invalidSnsToken;
           }
