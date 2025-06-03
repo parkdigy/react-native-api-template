@@ -1,6 +1,9 @@
+/* eslint-disable */
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { EsbuildPlugin } = require('esbuild-loader');
 const path = require('path');
+const ESLintPlugin = require('eslint-webpack-plugin');
+/* eslint-enable */
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -48,6 +51,8 @@ module.exports = {
   externals: {
     express: 'commonjs express',
     knex: 'commonjs knex',
+    mysql: 'commonjs mysql',
+    mssql: 'commonjs mssql',
     farmhash: 'commonjs farmhash',
     'steam-session': 'commonjs steam-session',
   },
@@ -75,5 +80,12 @@ module.exports = {
       },
     ],
   },
-  plugins: [new ForkTsCheckerWebpackPlugin()].filter(Boolean),
+  plugins: [
+    new ForkTsCheckerWebpackPlugin(),
+    new ESLintPlugin({
+      extensions: ['js', 'jsx', 'ts', 'tsx'],
+      failOnError: isProduction,
+      exclude: [path.resolve(__dirname, 'node_modules'), path.resolve(__dirname, 'dist')],
+    }),
+  ].filter(Boolean),
 };
