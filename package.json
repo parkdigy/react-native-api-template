@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NextAppsDeveloperTeam/react-native-api-template.git"
+    "url": "git+https://github.com/parkdigy/react-native-api-template.git"
   },
   "eslintConfig": {},
   "dependencies": {
