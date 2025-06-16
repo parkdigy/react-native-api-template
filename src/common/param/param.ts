@@ -6,8 +6,6 @@
 import { ParamOption, ParamOptionDataType } from './param.types';
 import dayjs from 'dayjs';
 import { isPersonalNo, isBusinessNo, isEmail, isUrl, isTelNo, isMobileNo, isNumericText } from '@pdg/compare';
-import { formatTelNo, formatBusinessNo, formatPersonalNo } from '@pdg/formatting';
-import { beginDateOfDay, endDateOfDay } from '@pdg/date-time';
 
 function isValueEmpty(value: any) {
   return ['', null, undefined].includes(value);
@@ -112,10 +110,10 @@ export default function param<
           if (notEmpty(value) && dateType) {
             switch (dateType) {
               case 'from':
-                value = beginDateOfDay(value);
+                value = util.dateTime.beginOfDay(value);
                 break;
               case 'to':
-                value = endDateOfDay(value);
+                value = util.dateTime.endOfDay(value);
                 break;
             }
           }
@@ -153,7 +151,7 @@ export default function param<
           }
           if (value) {
             if (dash) {
-              value = formatTelNo(value);
+              value = util.format.telNo(value);
             } else {
               value = value.replace(/-/g, '');
             }
@@ -166,7 +164,7 @@ export default function param<
             value = defaultValue;
           }
           if (value) {
-            value = dash ? formatBusinessNo(value) : value.replace(/-/g, '');
+            value = dash ? util.format.businessNo(value) : value.replace(/-/g, '');
           }
           break;
         case 'personal_no':
@@ -177,7 +175,7 @@ export default function param<
           }
 
           if (value) {
-            value = dash ? formatPersonalNo(value) : value.replace(/-/g, '');
+            value = dash ? util.format.personalNo(value) : value.replace(/-/g, '');
           }
           break;
         case 'enum':
