@@ -15,7 +15,7 @@
     "watchman:del": "watchman watch-del \"${PWD}\" ; watchman watch-project \"${PWD}\"",
     "git:commit": "node .git-commit.js",
     "git:push": "git push",
-    "git:commit:push": " npm run git:commit && npm run git:push",
+    "git:commit:push": "npm run git:commit && npm run git:push",
     "pm2:start": "pm2 start ecosystem.config.js",
     "pm2:restart": "pm2 delete ecosystem.config.js && pm2 start ecosystem.config.js",
     "pm2:reload": "pm2 reload ecosystem.config.js --force --update-env",
