@@ -11,7 +11,11 @@ const db = {
   // User
   User: new query.User(),
   UserLogin: new query.UserLogin(),
+  UserLoginSns: new query.UserLoginSns(),
   UserResign: new query.UserResign(),
+
+  // Device
+  Device: new query.Device(),
 
   // Notice
   Notice: new query.Notice(),

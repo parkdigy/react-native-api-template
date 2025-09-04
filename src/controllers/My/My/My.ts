@@ -28,15 +28,15 @@ export default {
       _os_: os,
       _os_v_: osVersion,
       _bn_: buildNumber,
-      d_m: deviceModel,
-      d_ma: deviceManufacturer,
+      _dm_: deviceModel,
+      _dmf_: deviceManufacturer,
     } = param(req, {
       token: Param_String_Required(),
       _os_: Param_Enum_Required(['ios', 'aos']),
       _os_v_: Param_String_Required(),
       _bn_: Param_String_Required(),
-      d_m: Param_String_Required(),
-      d_ma: Param_String_Required(),
+      _dm_: Param_String_Required(),
+      _dmf_: Param_String_Required(),
     });
 
     await util.fcm.addToken(req, token, {

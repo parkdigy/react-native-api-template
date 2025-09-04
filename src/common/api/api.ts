@@ -23,6 +23,7 @@ const Error = {
   auth: {
     signIn: {
       invalidSnsToken: new ApiError(500, 1000, '잘못된 SNS 로그인 정보입니다.'),
+      notExistsEmail: new ApiError(500, 1001, '인증 받은 이메일 주소가 없습니다.'),
     },
   },
   my: {

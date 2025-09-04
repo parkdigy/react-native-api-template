@@ -5,6 +5,7 @@
 import { Param_Boolean, Param_String } from '@common_param';
 import { AuthSignIn, AuthMakeLoginData } from './methods';
 import dayjs from 'dayjs';
+import { TUser$UpdateData, TUserLoginSns } from '@db_models';
 
 export default {
   ...AuthSignIn, // 로그인
@@ -29,13 +30,29 @@ export default {
           const loginInfo = await db.UserLogin.info(req, req.$$user.login_key);
           if (!loginInfo) throw api.Error.Unauthorized;
 
+          let loginSnsInfo:
+            | Pick<
+                TUserLoginSns,
+                'sns_access_token' | 'sns_access_token_exp' | 'sns_refresh_token' | 'sns_refresh_token_exp'
+              >
+            | undefined;
+          if (req.$$user.reg_type !== db.User.RegType.Guest) {
+            loginSnsInfo = await db.UserLoginSns.info(req, req.$$user.reg_type, req.$$user.sns_user_id);
+          }
+
+          let email: string | undefined = undefined;
+          let name: string | undefined = undefined;
+
           switch (req.$$user.reg_type) {
+            case db.User.RegType.Guest:
+              break;
             case db.User.RegType.Kakao:
               {
                 if (
-                  empty(loginInfo.sns_access_token) ||
-                  empty(loginInfo.sns_access_token_exp) ||
-                  empty(loginInfo.sns_refresh_token)
+                  !loginSnsInfo ||
+                  empty(loginSnsInfo.sns_access_token) ||
+                  empty(loginSnsInfo.sns_access_token_exp) ||
+                  empty(loginSnsInfo.sns_refresh_token)
                 ) {
                   throw api.Error.Unauthorized;
                 }
@@ -43,16 +60,16 @@ export default {
                 let accessToken: string;
 
                 // Access Token 만료 30분 전인지 확인
-                if (dayjs(loginInfo.sns_access_token_exp).subtract(30, 'minutes').isAfter(now())) {
-                  accessToken = loginInfo.sns_access_token;
+                if (dayjs(loginSnsInfo.sns_access_token_exp).subtract(30, 'minutes').isAfter(now())) {
+                  accessToken = loginSnsInfo.sns_access_token;
                 } else {
                   // Access Token 갱신
-                  const refreshTokenInfo = await util.sns.kakaoRefreshToken(loginInfo.sns_refresh_token);
+                  const refreshTokenInfo = await util.sns.kakaoRefreshToken(loginSnsInfo.sns_refresh_token);
 
                   accessToken = refreshTokenInfo.accessToken;
 
                   // 갱신된 토큰 정보 저장
-                  await db.UserLogin.edit(
+                  await db.UserLoginSns.edit(
                     req,
                     {
                       sns_access_token: accessToken,
@@ -61,7 +78,7 @@ export default {
                       sns_refresh_token_exp: refreshTokenInfo.refreshTokenExp,
                       update_date: now(),
                     },
-                    { login_key: req.$$user.login_key }
+                    { type: req.$$user.reg_type, sns_user_id: req.$$user.sns_user_id }
                   );
                 }
 
@@ -70,14 +87,17 @@ export default {
                 if (kakaoUserInfo.id !== req.$$user.sns_user_id) {
                   throw api.Error.Unauthorized;
                 }
+                email = kakaoUserInfo.email;
+                name = kakaoUserInfo.nickname;
               }
               break;
             case db.User.RegType.Naver:
               {
                 if (
-                  empty(loginInfo.sns_access_token) ||
-                  empty(loginInfo.sns_access_token_exp) ||
-                  empty(loginInfo.sns_refresh_token)
+                  !loginSnsInfo ||
+                  empty(loginSnsInfo.sns_access_token) ||
+                  empty(loginSnsInfo.sns_access_token_exp) ||
+                  empty(loginSnsInfo.sns_refresh_token)
                 ) {
                   throw api.Error.Unauthorized;
                 }
@@ -85,16 +105,16 @@ export default {
                 let accessToken: string;
 
                 // Access Token 만료 30분 전인지 확인
-                if (dayjs(loginInfo.sns_access_token_exp).subtract(30, 'minutes').isAfter(now())) {
-                  accessToken = loginInfo.sns_access_token;
+                if (dayjs(loginSnsInfo.sns_access_token_exp).subtract(30, 'minutes').isAfter(now())) {
+                  accessToken = loginSnsInfo.sns_access_token;
                 } else {
                   // Access Token 갱신
-                  const refreshTokenInfo = await util.sns.naverRefreshToken(loginInfo.sns_refresh_token);
+                  const refreshTokenInfo = await util.sns.naverRefreshToken(loginSnsInfo.sns_refresh_token);
 
                   accessToken = refreshTokenInfo.accessToken;
 
                   // 갱신된 토큰 정보 저장
-                  await db.UserLogin.edit(
+                  await db.UserLoginSns.edit(
                     req,
                     {
                       sns_access_token: accessToken,
@@ -102,7 +122,7 @@ export default {
                       sns_refresh_token: refreshTokenInfo.refreshToken,
                       update_date: now(),
                     },
-                    { login_key: req.$$user.login_key }
+                    { type: req.$$user.reg_type, sns_user_id: req.$$user.sns_user_id }
                   );
                 }
 
@@ -111,6 +131,9 @@ export default {
                 if (naverUserInfo.id !== req.$$user.sns_user_id) {
                   throw api.Error.Unauthorized;
                 }
+
+                email = naverUserInfo.email;
+                name = naverUserInfo.nickname;
               }
               break;
             case db.User.RegType.Google:
@@ -122,6 +145,9 @@ export default {
                 if (googleUserInfo.id !== req.$$user.sns_user_id) {
                   throw api.Error.Unauthorized;
                 }
+
+                email = googleUserInfo.email;
+                name = googleUserInfo.nickname;
               }
               break;
             case db.User.RegType.Apple:
@@ -129,18 +155,32 @@ export default {
                 if (empty(apple_id_token)) throw api.Error.Unauthorized;
 
                 // 애플 로그인 사용자 정보 조회
-                const appleUserInfo = await util.sns.googleGetUserInfo(apple_id_token);
+                const appleUserInfo = await util.sns.appleGetUserInfo(apple_id_token);
                 if (appleUserInfo.id !== req.$$user.sns_user_id) {
                   throw api.Error.Unauthorized;
                 }
+
+                email = appleUserInfo.email;
+                name = appleUserInfo.nickname;
               }
               break;
           }
 
           await db.trans.begin(req);
 
-          // 로그인 일자 갱신, 로그인 실패 횟수 초기화 초기화
-          await db.User.edit(req, { login_date: now(), update_date: now() }, { id: req.$$user.id });
+          const updateData: Omit<TUser$UpdateData, 'update_date'> = { login_date: now() };
+
+          if (notEmpty(email) && req.$$user.email !== email) {
+            updateData.email = email;
+            req.$$user.email = email;
+          }
+          if (notEmpty(name) && req.$$user.name !== name) {
+            updateData.name = name;
+            req.$$user.name = name;
+          }
+
+          // 로그인 일자 갱신
+          await db.User.editWithUpdateDate(req, updateData, { id: req.$$user.id });
 
           await db.trans.commit(req);
         }
@@ -152,10 +192,10 @@ export default {
       } catch {
         jwt.clearAccessToken(res);
 
-        api.success(res, await AuthMakeLoginData(req));
+        api.success(res, await AuthMakeLoginData(req, undefined));
       }
     } else {
-      api.success(res, await AuthMakeLoginData(req));
+      api.success(res, await AuthMakeLoginData(req, undefined));
     }
   },
 

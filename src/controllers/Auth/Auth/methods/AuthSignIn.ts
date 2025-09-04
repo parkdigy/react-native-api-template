@@ -3,9 +3,10 @@
  * ******************************************************************************************************************/
 
 import AuthMakeLoginData from './AuthMakeLoginData';
-import { Param_Date, Param_Enum_Required, Param_String } from '@common_param';
+import { Param_Date, Param_Enum_Required, Param_String, Param_String_Required } from '@common_param';
 import NickNamePrefix from './nickname_prefix_words.json';
 import NickNameAnimal from './nickname_animal_words.json';
+import { TUser$UpdateData } from '@db_models';
 
 const makeNickname = () => {
   const prefix = NickNamePrefix[Math.floor(Math.random() * NickNamePrefix.length)];
@@ -19,7 +20,13 @@ export const AuthSignIn = {
    * ******************************************************************************************************************/
   async signIn(req: MyRequest, res: MyResponse) {
     const {
-      _os_,
+      _ak_: appKey,
+      _iak_: installAppKey,
+      _os_: os,
+      _os_v_: osVersion,
+      _bn_: buildNumber,
+      _dm_: deviceModel,
+      _dmf_: deviceManufacturer,
       type,
       kakao_access_token,
       kakao_access_token_exp,
@@ -31,7 +38,13 @@ export const AuthSignIn = {
       google_id_token,
       apple_id_token,
     } = param(req, {
+      _ak_: Param_String_Required(), // 앱 키
+      _iak_: Param_String_Required(), // 설치 앱 키
       _os_: Param_Enum_Required(['ios', 'aos']), // OS 구분
+      _os_v_: Param_String_Required(), // OS 버전
+      _bn_: Param_String_Required(), // 빌드 번호
+      _dm_: Param_String_Required(), // 디바이스 모델
+      _dmf_: Param_String_Required(), // 디바이스 제조사
       type: Param_Enum_Required(db.User.RegType.getList()), // 로그인 구분
       kakao_access_token: Param_String(), // 카카오 액세스 토큰
       kakao_access_token_exp: Param_Date(), // 카카오 액세스 토큰 만료일
@@ -45,8 +58,8 @@ export const AuthSignIn = {
     });
 
     let userKey: string;
-    let email: string | undefined;
-    let nickname: string | undefined;
+    let email: string | undefined = undefined;
+    let name: string | undefined = undefined;
     let snsUserId: string | undefined = undefined;
     let snsAccessToken: string | undefined = undefined;
     let snsAccessTokenExp: Date | undefined = undefined;
@@ -54,6 +67,14 @@ export const AuthSignIn = {
     let snsRefreshTokenExp: Date | undefined = undefined;
 
     switch (type) {
+      case db.User.RegType.Guest:
+        {
+          if (req.$$user) throw api.newExceptionError();
+
+          snsUserId = `guest_${installAppKey}`;
+          userKey = `guest_${installAppKey}`;
+        }
+        break;
       case db.User.RegType.Kakao:
         // 카카오 로그인 일 경우
         {
@@ -71,7 +92,7 @@ export const AuthSignIn = {
             const kakaoUserInfo = await util.sns.kakaoGetUserInfo(kakao_access_token);
             userKey = db.User.getUserKey(type, kakaoUserInfo.id);
             email = kakaoUserInfo.email;
-            nickname = kakaoUserInfo.nickname;
+            name = kakaoUserInfo.nickname;
             snsUserId = kakaoUserInfo.id;
             snsAccessToken = kakao_access_token;
             snsAccessTokenExp = kakao_access_token_exp;
@@ -95,7 +116,7 @@ export const AuthSignIn = {
             const naverUserInfo = await util.sns.naverGetUserInfo(naver_access_token);
             userKey = db.User.getUserKey(type, naverUserInfo.id);
             email = naverUserInfo.email;
-            nickname = naverUserInfo.nickname;
+            name = naverUserInfo.nickname;
             snsUserId = naverUserInfo.id;
             snsAccessToken = naver_access_token;
             snsAccessTokenExp = naver_access_token_exp;
@@ -117,7 +138,7 @@ export const AuthSignIn = {
             const googleUserInfo = await util.sns.googleGetUserInfo(google_id_token);
             userKey = db.User.getUserKey(type, googleUserInfo.id);
             email = googleUserInfo.email;
-            nickname = googleUserInfo.nickname;
+            name = googleUserInfo.nickname;
             snsUserId = googleUserInfo.id;
           } catch {
             // 구글 사용자 정보 조회 실패
@@ -136,7 +157,7 @@ export const AuthSignIn = {
             const appleUserInfo = await util.sns.appleGetUserInfo(apple_id_token);
             userKey = db.User.getUserKey(type, appleUserInfo.id);
             email = appleUserInfo.email;
-            nickname = appleUserInfo.nickname;
+            name = appleUserInfo.nickname;
             snsUserId = appleUserInfo.id;
           } catch {
             // 애플 사용자 정보 조회 실패
@@ -146,8 +167,8 @@ export const AuthSignIn = {
         break;
     }
 
-    if (!nickname) {
-      nickname = makeNickname();
+    if (type !== db.User.RegType.Guest && !email) {
+      throw api.Error.auth.signIn.notExistsEmail;
     }
 
     // 회원정보 조회
@@ -158,45 +179,123 @@ export const AuthSignIn = {
     // Transaction begin
     await db.trans.begin(req);
 
-    // 회원정보가 없는 경우 가입 처리
-    if (!userInfo) {
-      userId = (
-        await db.User.add(req, {
+    // 비회원 상태에서 로그인 한 경우, SNS 로그인이 신규 가입 인 경우 데이터 이전
+    if (req.$$user && req.$$user.reg_type === db.User.RegType.Guest && !userInfo) {
+      await db.User.editWithUpdateDate(
+        req,
+        {
           user_key: userKey,
           sns_user_id: snsUserId,
-          email,
-          nickname,
+          email: ifUndefined(email, null),
+          name: ifUndefined(name, null),
           reg_type: type,
-          reg_os: _os_,
-          is_push_notification: false,
+          reg_os: os,
+          reg_app_key: appKey,
+          reg_install_app_key: installAppKey,
           login_date: now(),
           status: db.User.Status.On,
-          create_date: now(),
-          update_date: now(),
+        },
+        { id: req.$$user.id }
+      );
+
+      userInfo = await db.User.info(req, userKey);
+    }
+
+    // 회원정보가 없는 경우 가입 처리
+    if (!userInfo) {
+      const uuid = await db.User.newUUID(req);
+
+      userId = (
+        await db.User.addWithCreateUpdateDate(req, {
+          user_key: userKey,
+          sns_user_id: snsUserId,
+          uuid,
+          email: ifUndefined(email, null),
+          name: ifUndefined(name, null),
+          nickname: makeNickname(),
+          reg_type: type,
+          reg_os: os,
+          is_push_notification: false,
+          reg_app_key: appKey,
+          reg_install_app_key: installAppKey,
+          login_date: now(),
+          status: db.User.Status.On,
         })
       )[0];
 
       userInfo = await db.User.info(req, userKey);
       if (!userInfo) throw api.newExceptionError();
+
+      util.slack.sendAdminAlarm([
+        ':child: 신규 회원 가입',
+        `회원 ID : ${userId}`,
+        `이름 : ${name}`,
+        `OS : ${os}(${osVersion})`,
+        `기기 : ${deviceModel} - ${deviceManufacturer}`,
+        `가입 구분 : ${type}`,
+      ]);
     } else {
+      const updateData: Omit<TUser$UpdateData, 'update_date'> = { login_date: now() };
+
+      if (notEmpty(email) && userInfo.email !== email) {
+        updateData.email = email;
+      }
+      if (notEmpty(name) && userInfo.name !== name) {
+        updateData.name = name;
+      }
+
+      await db.User.editWithUpdateDate(req, updateData, { id: userInfo.id });
+
       userId = userInfo.id;
     }
 
     // 로그인 KEY 생성
-    const loginKey = await db.User.newLoginKey(req, userId);
+    const loginKey = await db.User.newLoginKey(userId);
 
-    await db.UserLogin.add(req, {
+    const deviceId = await db.Device.getId(req, deviceModel, deviceManufacturer);
+
+    const userLoginAddEditData = {
       login_key: loginKey,
-      user_id: userId,
-      os: _os_,
-      sns_access_token: snsAccessToken,
-      sns_access_token_exp: snsAccessTokenExp,
-      sns_refresh_token: snsRefreshToken,
-      sns_refresh_token_exp: snsRefreshTokenExp,
+      os,
+      os_version: osVersion,
+      build_number: buildNumber,
+      device_id: deviceId,
       expire_date: dayjs().add(Number(process.env.AUTH_JWT_TOKEN_EXPIRES_DAYS), 'days').toDate(),
-      create_date: now(),
-      update_date: now(),
-    });
+    };
+
+    if (await db.UserLogin.exists(req, { user_id: userId, app_key: appKey })) {
+      await db.UserLogin.editWithUpdateDate(req, userLoginAddEditData, { user_id: userId, app_key: appKey });
+    } else {
+      await db.UserLogin.addWithCreateUpdateDate(req, {
+        user_id: userId,
+        app_key: appKey,
+        ...userLoginAddEditData,
+      });
+    }
+
+    if (type !== db.UserLoginSns.Type.Guest) {
+      if (await db.UserLoginSns.exists(req, { type, sns_user_id: snsUserId })) {
+        await db.UserLoginSns.editWithUpdateDate(
+          req,
+          {
+            sns_access_token: snsAccessToken,
+            sns_access_token_exp: snsAccessTokenExp,
+            sns_refresh_token: snsRefreshToken,
+            sns_refresh_token_exp: snsRefreshTokenExp,
+          },
+          { type, sns_user_id: snsUserId }
+        );
+      } else {
+        await db.UserLoginSns.addWithCreateUpdateDate(req, {
+          type,
+          sns_user_id: snsUserId,
+          sns_access_token: snsAccessToken,
+          sns_access_token_exp: snsAccessTokenExp,
+          sns_refresh_token: snsRefreshToken,
+          sns_refresh_token_exp: snsRefreshTokenExp,
+        });
+      }
+    }
 
     // Transaction commit
     await db.trans.commit(req);

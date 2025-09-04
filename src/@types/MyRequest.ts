@@ -3,7 +3,10 @@ import { Knex } from 'knex';
 import { TUser } from '@db_models';
 
 export interface MyRequestUser
-  extends Pick<TUser, 'id' | 'user_key' | 'sns_user_id' | 'email' | 'nickname' | 'reg_type' | 'is_push_notification'> {
+  extends Pick<
+    TUser,
+    'id' | 'user_key' | 'uuid' | 'sns_user_id' | 'email' | 'name' | 'nickname' | 'reg_type' | 'is_push_notification'
+  > {
   login_key: string;
 }
 

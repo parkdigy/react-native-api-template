@@ -2,7 +2,7 @@
  * 공지사항 컨트롤러
  * ******************************************************************************************************************/
 
-import { Param_Id_Integer_Required, Param_Integer, Param_Limit } from '@common_param';
+import { Param_Id_Integer_Required, Param_Integer, Param_Limit, Param_String } from '@common_param';
 
 export default {
   /********************************************************************************************************************
@@ -11,7 +11,7 @@ export default {
   async list(req: MyRequest, res: MyResponse) {
     const { last_id, data_key, limit } = param(req, {
       last_id: Param_Integer(),
-      data_key: Param_Integer(),
+      data_key: Param_String(),
       ...Param_Limit(),
     });
 

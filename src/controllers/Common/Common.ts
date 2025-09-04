@@ -13,7 +13,7 @@ export default {
 
     const info = await db.Config.infoForSession(req, _os_);
 
-    api.success(res, info);
+    api.success(res, { ...info, dt: now() });
   },
 
   /********************************************************************************************************************

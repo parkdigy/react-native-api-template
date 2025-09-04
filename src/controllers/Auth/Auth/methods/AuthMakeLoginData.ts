@@ -3,15 +3,14 @@
  * ******************************************************************************************************************/
 
 import { Param_Enum_Required } from '@common_param';
-import { TUser$RegType } from '@db_models';
+import { TUser } from '@db_models';
 
 /** 로그인 데이터 생성을 위한 회원 정보 구조 */
-export interface MakeLoginDataUserInfo {
-  reg_type: TUser$RegType; // 가입 구분
-  user_key: string; // 회원 KEY
-  nickname: string; // 이름
-  is_push_notification: boolean; // 이벤트 푸시 수신 여부
-}
+export interface MakeLoginDataUserInfo
+  extends Pick<
+    TUser,
+    'id' | 'user_key' | 'uuid' | 'email' | 'nickname' | 'name' | 'reg_type' | 'is_push_notification'
+  > {}
 
 export const AuthMakeLoginData = async (req: MyRequest, user?: MakeLoginDataUserInfo) => {
   const { _os_ } = param(req, { _os_: Param_Enum_Required(['ios', 'aos']) });
@@ -24,6 +23,8 @@ export const AuthMakeLoginData = async (req: MyRequest, user?: MakeLoginDataUser
       ? {
           reg_type: user.reg_type,
           user_key: user.user_key,
+          uuid: user.uuid,
+          name: user.name,
           nickname: user.nickname,
           is_push_notification: user.is_push_notification,
         }

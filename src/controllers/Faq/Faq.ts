@@ -2,14 +2,14 @@
  * FAQ 컨트롤러
  * ******************************************************************************************************************/
 
-import { Param_Integer } from '@common_param';
+import { Param_String } from '@common_param';
 
 export default {
   /********************************************************************************************************************
    * 목록
    * ******************************************************************************************************************/
   async list(req: MyRequest, res: MyResponse) {
-    const { data_key } = param(req, { data_key: Param_Integer() });
+    const { data_key } = param(req, { data_key: Param_String() });
 
     const dataKey = await db.DataKey.getDataKey(req, db.DataKey.Id.Faq);
 
