@@ -22,7 +22,7 @@ export default function (
   const result = [
     Starter,
     ...afterStartMiddlewares,
-    async (req: MyRequest, res: MyResponse, next: NextFunction) => {
+    async (req: MyRequest | MyAuthRequest, res: MyResponse, next: NextFunction) => {
       try {
         await controller(req, res);
         await db.trans.commitAll(req);
