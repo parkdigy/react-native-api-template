@@ -8,7 +8,9 @@ const router = express.Router();
 
 router.get(
   '/',
-  ApiController((req: MyRequest, res: MyResponse) => res.send('pong'))
+  ApiController((req: MyRequest, res: MyResponse) => {
+    res.send('pong');
+  })
 );
 
 export default router;
