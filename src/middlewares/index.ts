@@ -11,3 +11,4 @@ export { default as RemoteIpAddressSetter } from './RemoteIpAddressSetter';
 export { default as ApiController } from './ApiController';
 export { default as ApiMulterController } from './ApiMulterController';
 export { default as ApiJwtCookieAuthChecker } from './ApiJwtCookieAuthChecker';
+export { default as ApiNoErrorJwtCookieAuthChecker } from './ApiNoErrorJwtCookieAuthChecker';
