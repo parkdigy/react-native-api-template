@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.use('/deploy', Logger(), Deploy);
 
-if (env.isLocal()) {
+if (env.isLocal) {
   router.use('/test', LocalChecker, Test);
 }
 
