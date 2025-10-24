@@ -7,11 +7,16 @@
  * - Finisher 실행
  * ******************************************************************************************************************/
 
-import { MyController } from '@types';
+import { MyAuthController, MyController } from '@types';
 import { RequestHandler } from 'express';
 import { MulterRemover } from './Multer';
 import ApiController from './ApiController';
 
-export default function (multer: RequestHandler, controller: MyController, logging = true, loggingData = false) {
+export default function (
+  multer: RequestHandler,
+  controller: MyController | MyAuthController,
+  logging = true,
+  loggingData = false
+) {
   return ApiController(controller, logging, loggingData, [multer], [MulterRemover]);
 }

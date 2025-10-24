@@ -5,7 +5,7 @@
 import _jwt, { SignOptions, VerifyOptions } from 'jsonwebtoken';
 import { JwtPayload } from './jwt.types';
 import crypt from '../crypt';
-import { CookieOptions } from 'express-serve-static-core';
+import { CookieOptions } from 'express';
 
 const jwt = {
   cookieName: ifEmpty(process.env.AUTH_JWT_TOKEN_COOKIE_NAME, `_${process.env.PROJECT_NAME}_ajt_`), // AccessToken 저장 쿠키명
@@ -75,7 +75,15 @@ const jwt = {
       if (token) {
         const { key } = jwt.verify(token);
         const payload = crypt.dec(key);
-        const payloadData = JSON.parse(payload);
+        const payloadData = JSON.parse(payload) as {
+          dt: string;
+          ua: string | null;
+          ip: string | null;
+          key: string;
+          ltype: string;
+          lkey: string;
+          ed: number;
+        };
 
         userKey = payloadData.key;
         loginType = payloadData.ltype;

@@ -10,13 +10,13 @@
 import Starter from './Starter';
 import Finisher from './Finisher';
 import Logger from './Logger';
-import { MyController } from '@types';
+import { MyAuthController, MyController } from '@types';
 import { NextFunction, RequestHandler } from 'express';
 import CommonLogging from '@common_logging';
 import { ApiError } from '@common_api';
 
 export default function (
-  controller: MyController,
+  controller: MyController | MyAuthController,
   logging = true,
   loggingData = false,
   afterStartMiddlewares: RequestHandler[] = [],
@@ -31,7 +31,7 @@ export default function (
   handlers.push(
     Starter,
     ...afterStartMiddlewares,
-    async (req: MyRequest, res: MyResponse, next: NextFunction) => {
+    async (req: MyRequest | MyAuthRequest, res: MyResponse, next: NextFunction) => {
       function printError(err: Error) {
         ll(req.method, `${req.baseUrl}${req.path}`, err);
       }
@@ -49,7 +49,7 @@ export default function (
       };
 
       try {
-        await controller(req, res);
+        await controller(req as any, res);
         try {
           await db.trans.commitAll(req);
         } catch (err) {
