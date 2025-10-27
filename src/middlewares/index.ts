@@ -12,3 +12,5 @@ export { default as ApiController } from './ApiController';
 export { default as ApiMulterController } from './ApiMulterController';
 export { default as ApiJwtCookieAuthChecker } from './ApiJwtCookieAuthChecker';
 export { default as ApiNoErrorJwtCookieAuthChecker } from './ApiNoErrorJwtCookieAuthChecker';
+export { default as ApiJwtCookieAuthCheckMulterController } from './ApiJwtCookieAuthCheckMulterController';
+export { default as ApiNoErrorJwtCookieAuthCheckMulterController } from './ApiNoErrorJwtCookieAuthCheckMulterController';

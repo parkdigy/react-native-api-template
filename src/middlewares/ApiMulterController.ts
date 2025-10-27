@@ -9,7 +9,7 @@
 
 import { MyAuthController, MyController } from '@types';
 import { RequestHandler } from 'express';
-import { MulterRemover } from './Multer';
+import { MulterOriginalNameChanger, MulterRemover } from './Multer';
 import ApiController from './ApiController';
 
 export default function (
@@ -18,5 +18,5 @@ export default function (
   logging = true,
   loggingData = false
 ) {
-  return ApiController(controller, logging, loggingData, [multer], [MulterRemover]);
+  return ApiController(controller, logging, loggingData, [multer, MulterOriginalNameChanger], [MulterRemover]);
 }
