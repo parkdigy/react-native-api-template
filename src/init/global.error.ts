@@ -5,6 +5,12 @@ declare global {
    * @returns 에러 객체
    */
   function paramError(name?: string): Error;
+
+  /**
+   * 오류를 출력합니다.
+   * @param err Error 객체
+   */
+  function printError(req: MyRequest, err: Error): void;
 }
 
 /********************************************************************************************************************
@@ -16,6 +22,30 @@ globalThis.paramError = (name?: string) => {
   } else {
     return new Error('파라메터 정보가 유효하지 않습니다.');
   }
+};
+
+/********************************************************************************************************************
+ * printError
+ * ******************************************************************************************************************/
+globalThis.printError = (req: MyRequest, err: Error) => {
+  // 개발 환경일 경우에만 출력
+  ll('!!!ERROR!!! >>>>>>>>>>>>>>>>>>>>>>>>>>');
+  const data = {
+    ...req.params,
+    ...req.query,
+    ...req.body,
+  };
+  Object.keys(data).forEach((key) => {
+    if (typeof data[key] === 'string' && data[key].length > 1000) {
+      data[key] = `${data[key].substring(0, 1000)}... (length: ${data[key].length})`;
+    }
+  });
+  ll(data);
+
+  if (err.stack) {
+    ll(err.stack.substring(0, 200), err.stack.length > 200 ? '...' : '');
+  }
+  ll('<<<<<<<<<<<<<<<<<<<<<<<<<< !!!ERROR!!!');
 };
 
 export {};
