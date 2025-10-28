@@ -28,7 +28,7 @@ globalThis.paramError = (name?: string) => {
 /********************************************************************************************************************
  * printError
  * ******************************************************************************************************************/
-globalThis.printError = (req: MyRequest, err: Error) => {
+globalThis.printError = (req: MyRequest, err: any) => {
   // 개발 환경일 경우에만 출력
   ll('!!!ERROR!!! >>>>>>>>>>>>>>>>>>>>>>>>>>');
   ll(req.method, `${req.baseUrl}${req.path}`);
@@ -46,6 +46,10 @@ globalThis.printError = (req: MyRequest, err: Error) => {
 
   if (err.stack) {
     ll(err.stack.substring(0, 200), err.stack.length > 200 ? '...' : '');
+  } else if (err.message) {
+    ll(err.message);
+  } else {
+    ll(err);
   }
   ll('<<<<<<<<<<<<<<<<<<<<<<<<<< !!!ERROR!!!');
 };
