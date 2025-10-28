@@ -27,6 +27,10 @@ declare namespace NodeJS {
     // HTTPS 인증서 cert.pem 파일 경로
     APP_SECURE_CERT_PATH: string;
 
+    // PM2 Reload
+    PM2_RELOAD_HOUR: string;
+    PM2_RELOAD_MINUTE: string;
+
     // 접속 로그 기록 여부
     LOGGING: EnvBoolean;
 
