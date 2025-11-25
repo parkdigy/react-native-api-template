@@ -9,6 +9,7 @@ import {
   GetObjectCommand,
   GetObjectCommandOutput,
   PutObjectCommand,
+  DeleteObjectCommand,
   NotFound,
 } from '@aws-sdk/client-s3';
 import fs from 'fs';
@@ -238,9 +239,10 @@ export const awsS3Private = {
    * 파일 다운로드
    * @param s3Path S3 경로
    * @param s3FileName S3 파일명
+   * @param notUseS3Path env 에서 지정한 S3_PATH 미사용 여부
    * @returns 파일 데이터
    * ******************************************************************************************************************/
-  getObject(s3Path: string, s3FileName: string) {
+  getObject(s3Path: string, s3FileName: string, notUseS3Path = false) {
     if (!s3) throw new Error('env 에 S3 (Private) 정보를 등록해야합니다.');
     if (empty(process.env.S3_PRIVATE_BUCKET)) throw new Error('env 에 S3_PRIVATE_BUCKET 값을 등록해야 합니다.');
 
@@ -248,13 +250,45 @@ export const awsS3Private = {
       s3.send(
         new GetObjectCommand({
           Bucket: process.env.S3_PRIVATE_BUCKET,
-          Key: util.url.join(process.env.S3_PRIVATE_PATH || '', s3Path, s3FileName),
+          Key: util.url.join(notUseS3Path ? '' : ifEmpty(process.env.S3_PATH, ''), s3Path, s3FileName),
         })
       )
         .then((data) => {
           resolve(data);
         })
         .catch((err) => reject(err));
+    });
+  },
+
+  /********************************************************************************************************************
+   * 파일 삭제
+   * @param s3Path S3 경로
+   * @param s3FileName S3 파일명
+   * @param notUseS3Path env 에서 지정한 S3_PATH 미사용 여부
+   * ******************************************************************************************************************/
+  deleteObject(s3Path: string, s3FileName: string, notUseS3Path = false) {
+    if (!s3) throw new Error('env 에 S3 (Private) 정보를 등록해야합니다.');
+    if (empty(process.env.S3_PRIVATE_BUCKET)) throw new Error('env 에 S3_PRIVATE_BUCKET 값을 등록해야 합니다.');
+
+    return new Promise<boolean>((resolve, reject) => {
+      try {
+        const key = util.url.join(notUseS3Path ? '' : ifEmpty(process.env.S3_PATH, ''), s3Path, s3FileName);
+
+        const command = new DeleteObjectCommand({
+          Bucket: process.env.S3_PRIVATE_BUCKET,
+          Key: key,
+        });
+
+        s3.send(command)
+          .then(() => {
+            resolve(true);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      } catch (err) {
+        reject(err);
+      }
     });
   },
 };
