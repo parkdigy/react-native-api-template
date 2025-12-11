@@ -12,7 +12,9 @@ export default class MySqlQuery<
   TRecord extends {} = Knex.ResolveTableType<Knex.TableType<TTable>>,
   TInsertRecord extends {} = Knex.ResolveTableType<Knex.TableType<TTable>, 'insert'>,
   TUpdateRecord extends {} = Knex.ResolveTableType<Knex.TableType<TTable>, 'update'>,
-  TWhereColumnNameValues extends { [key: string]: any } = { [K in keyof TRecord]+?: TRecord[K] | TRecord[K][] },
+  TWhereColumnNameValues extends { [key: string]: any } = {
+    [K in keyof TRecord]+?: TRecord[K] | TRecord[K][] | Knex.Raw;
+  },
 > {
   util: typeof MySqlKnexUtil;
   tableName: Knex.TableNames;
@@ -58,6 +60,12 @@ export default class MySqlQuery<
         const value = whereColumnValues[key];
         if (value === null) {
           negative ? builder.whereNotNull(key) : builder.whereNull(key);
+        } else if (
+          typeof value === 'object' &&
+          typeof value.toSQL === 'function' &&
+          (value.toSQL().method === 'raw' || value.toSQL().method === 'Raw')
+        ) {
+          builder.whereRaw(db.raw(`${key} ?`, [value]));
         } else if (Array.isArray(value)) {
           negative ? builder.whereNotIn(key, value) : builder.whereIn(key, value);
         } else {
