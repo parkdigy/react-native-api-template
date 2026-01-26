@@ -6,7 +6,7 @@
  * - 로그인 실패 시, 쿠키에서 JWT 토큰을 삭제
  * ******************************************************************************************************************/
 
-import { NextFunction } from 'express';
+import { type NextFunction } from 'express';
 import CommonLogging from '@common_logging';
 import { ApiError } from '@common_api';
 import { Param_String_Required } from '@common_param';

@@ -4,8 +4,8 @@
 
 import { MySqlQuery } from '@db_query_common';
 import { Knex } from 'knex';
-import { TUser$RegOs, TUser$RegType, TUser$Status } from '@db_models';
 import crypt from '@common_crypt';
+import { UserRegOs, UserRegType, UserStatus } from '@const';
 
 const tableName: Knex.TableNames = 'user';
 type tableName = typeof tableName;
@@ -15,9 +15,9 @@ const makeLoginKey = (userId: number) => {
 };
 
 export default class User extends MySqlQuery<tableName> {
-  Status = TUser$Status;
-  RegOs = TUser$RegOs;
-  RegType = TUser$RegType;
+  Status = UserStatus;
+  RegOs = UserRegOs;
+  RegType = UserRegType;
 
   constructor() {
     super(tableName);
@@ -47,7 +47,7 @@ export default class User extends MySqlQuery<tableName> {
    * 회원 KEY 반환
    * ******************************************************************************************************************/
 
-  getUserKey(regType: TUser$RegType, snsUserId: string) {
+  getUserKey(regType: UserRegType, snsUserId: string) {
     return `${regType}_${snsUserId}`;
   }
 

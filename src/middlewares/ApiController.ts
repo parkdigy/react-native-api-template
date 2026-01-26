@@ -10,8 +10,8 @@
 import Starter from './Starter';
 import Finisher from './Finisher';
 import Logger from './Logger';
-import { MyAuthController, MyController } from '@types';
-import { NextFunction, RequestHandler } from 'express';
+import { type MyAuthController, type MyController } from '@types';
+import { type NextFunction, type RequestHandler } from 'express';
 import CommonLogging from '@common_logging';
 import { ApiError } from '@common_api';
 

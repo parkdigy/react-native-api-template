@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { type Request } from 'express';
 import { Knex } from 'knex';
 import { TUser } from '@db_models';
 
