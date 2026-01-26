@@ -1,5 +1,5 @@
 import { Knex } from 'knex';
-import { TableInsertData } from '@db_models_types';
+import { type TableInsertData } from '@db_models_types';
 
 export interface TDevice {
   /** Primary Key */
@@ -12,7 +12,7 @@ export interface TDevice {
 
 export type TDevice$InsertData = TableInsertData<TDevice, 'id'>;
 
-export default TDevice;
+export type { TDevice as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

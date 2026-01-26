@@ -8,18 +8,12 @@
  * ******************************************************************************************************************/
 
 import { Knex } from 'knex';
-import { TableInsertData, TableUpdateData } from '@db_models_types';
-
-/** ID */
-export const TDataKey$Id = {
-  Notice: 'notice',
-  Faq: 'faq',
-} as const;
-export type TDataKey$Id = ValueOf<typeof TDataKey$Id>;
+import { type TableInsertData, type TableUpdateData } from '@db_models_types';
+import type { DataKeyId } from '@const';
 
 export interface TDataKey {
   /** Primary Key */
-  id: string; // ID // max:20
+  id: DataKeyId; // ID // max:20
   /** Others */
   data_key: number; // 데이터 변경 KEY (변경 시 마다 1 증가) : bigint
   create_date: Date; // 등록일자
@@ -29,7 +23,7 @@ export interface TDataKey {
 export type TDataKey$InsertData = TableInsertData<TDataKey>;
 export type TDataKey$UpdateData = TableUpdateData<TDataKey, 'id', 'update_date'>;
 
-export default TDataKey;
+export type { TDataKey as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

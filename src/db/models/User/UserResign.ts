@@ -3,8 +3,8 @@
  * ******************************************************************************************************************/
 
 import { Knex } from 'knex';
-import { TableInsertData, TableUpdateData } from '@db_models_types';
-import TUser from './User';
+import { type TableInsertData, type TableUpdateData } from '@db_models_types';
+import { type TUser } from './User';
 
 export interface TUserResign {
   /** Primary Key */
@@ -18,7 +18,7 @@ export interface TUserResign {
 export type TUserResign$InsertData = TableInsertData<TUserResign>;
 export type TUserResign$UpdateData = TableUpdateData<TUserResign, 'user_id' | 'reason' | 'create_date', 'update_date'>;
 
-export default TUserResign;
+export type { TUserResign as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

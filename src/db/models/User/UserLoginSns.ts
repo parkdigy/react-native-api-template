@@ -3,15 +3,12 @@
  * ******************************************************************************************************************/
 
 import { Knex } from 'knex';
-import { TableInsertData, TableUpdateData } from '@db_models_types';
-import { TUser$RegType } from './User';
-
-export type TUserLoginSns$Type = Exclude<TUser$RegType, 'GUEST'>;
-export const TUserLoginSns$Type = TUser$RegType;
+import { type TableInsertData, type TableUpdateData } from '@db_models_types';
+import type { UserLoginSnsType } from '@const';
 
 export interface TUserLoginSns {
   /** Primary Key */
-  type: TUserLoginSns$Type; // 가입 구분
+  type: UserLoginSnsType; // 가입 구분
   sns_user_id: string; // SNS 회원 ID // max:200
   /** Others */
   sns_access_token: string | null; // SNS Access Token // max:200
@@ -33,7 +30,7 @@ export type TUserLoginSns$UpdateData = TableUpdateData<
   'update_date'
 >;
 
-export default TUserLoginSns;
+export type { TUserLoginSns as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

@@ -1,4 +1,4 @@
-import { NextFunction } from 'express';
+import { type NextFunction } from 'express';
 import { Param_String_Required } from '@common_param';
 
 /**

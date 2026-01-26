@@ -3,13 +3,8 @@
  * ******************************************************************************************************************/
 
 import { Knex } from 'knex';
-import { TableInsertData, TableUpdateData } from '@db_models_types';
-import { makeEnum } from '@db_models_util';
-
-/** 상태 */
-const Status = { ON: '노출', OFF: '숨김' };
-export type TNotice$Status = keyof typeof Status;
-export const TNotice$Status = makeEnum('status', Status);
+import { type TableInsertData, type TableUpdateData } from '@db_models_types';
+import type { NoticeStatus } from '@const';
 
 export interface TNotice {
   /** Primary Key */
@@ -18,7 +13,7 @@ export interface TNotice {
   title: string; // 제목 // max:100
   content: string; // 내용 // text
   notice_date: Date; // 공지일자
-  status: TNotice$Status; // 상태
+  status: NoticeStatus; // 상태
   create_date: Date; // 등록일자
   update_date: Date; // 수정일자
 }
@@ -26,7 +21,7 @@ export interface TNotice {
 export type TNotice$InsertData = TableInsertData<TNotice, 'id'>;
 export type TNotice$UpdateData = TableUpdateData<TNotice, 'id' | 'create_date', 'update_date'>;
 
-export default TNotice;
+export type { TNotice as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

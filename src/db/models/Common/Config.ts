@@ -3,7 +3,7 @@
  * ******************************************************************************************************************/
 
 import { Knex } from 'knex';
-import { TableUpdateData } from '@db_models_types';
+import { type TableUpdateData } from '@db_models_types';
 
 export const TConfig$Id = 1;
 
@@ -25,7 +25,7 @@ export interface TConfig {
 
 export type TConfig$UpdateData = TableUpdateData<TConfig, 'id', 'update_date'>;
 
-export default TConfig;
+export type { TConfig as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

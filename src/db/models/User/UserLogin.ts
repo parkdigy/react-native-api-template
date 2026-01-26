@@ -3,15 +3,10 @@
  * ******************************************************************************************************************/
 
 import { Knex } from 'knex';
-import { TableInsertData, TableUpdateData } from '@db_models_types';
-import { makeEnum } from '@db_models_util';
-import { TUser } from './User';
-import { TDevice } from '../Device';
-
-/** 가입 OS */
-const Os = { ios: 'iOS', aos: 'Android' };
-export type TUserLogin$Os = keyof typeof Os;
-export const TUserLogin$Os = makeEnum('reg_os', Os);
+import { type TableInsertData, type TableUpdateData } from '@db_models_types';
+import { type TUser } from './User';
+import { type TDevice } from '../Device';
+import type { UserLoginOs } from '@const';
 
 export interface TUserLogin {
   /** Primary Key */
@@ -19,7 +14,7 @@ export interface TUserLogin {
   app_key: string; // 앱 KEY // max:32
   /** Others */
   login_key: string; // 로그인 KEY // max:200
-  os: TUserLogin$Os; // 가입 OS
+  os: UserLoginOs; // 가입 OS
   os_version: string; // OS 버전 // max:20
   build_number: string; // 빌드 번호 // max:10
   device_id: TDevice['id']; // 디바이스 ID
@@ -31,7 +26,7 @@ export interface TUserLogin {
 export type TUserLogin$InsertData = TableInsertData<TUserLogin>;
 export type TUserLogin$UpdateData = TableUpdateData<TUserLogin, 'user_id' | 'app_key' | 'create_date', 'update_date'>;
 
-export default TUserLogin;
+export type { TUserLogin as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

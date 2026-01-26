@@ -3,8 +3,8 @@
  * ******************************************************************************************************************/
 
 import FirebaseAdmin from 'firebase-admin';
-import { BaseMessage, TokenMessage, TopicMessage } from 'firebase-admin/lib/messaging';
-import { TFcmToken$Os } from '@db_models';
+import { FcmTokenOs } from '@const';
+import type { BaseMessage, TokenMessage, TopicMessage } from 'firebase-admin/messaging';
 
 /** 발송 대상 - FCM 토픽 */
 const TopicBase = {
@@ -15,11 +15,11 @@ const TopicBase = {
 type Topic = keyof typeof TopicBase;
 const Topic = {
   ...TopicBase,
-  getTopicsByOs(os: TFcmToken$Os): Topic[] {
+  getTopicsByOs(os: FcmTokenOs): Topic[] {
     switch (os) {
-      case TFcmToken$Os.Ios:
+      case FcmTokenOs.Ios:
         return ['all', 'ios'];
-      case TFcmToken$Os.Android:
+      case FcmTokenOs.Android:
         return ['all', 'aos'];
       default:
         return ['all'];
@@ -76,7 +76,7 @@ export default {
       isPushNotification,
     }: {
       userId: number;
-      os: TFcmToken$Os;
+      os: FcmTokenOs;
       osVersion: string;
       buildNumber: string;
       deviceModel: string;
@@ -133,7 +133,7 @@ export default {
   /********************************************************************************************************************
    * 토큰의 모든 토픽 구독 해제
    * ******************************************************************************************************************/
-  async subscribeTokensToAllTopic(os: TFcmToken$Os, tokens: string[]) {
+  async subscribeTokensToAllTopic(os: FcmTokenOs, tokens: string[]) {
     if (notEmpty(tokens)) {
       const topics = Topic.getTopicsByOs(os);
       for (const topic of topics) {
@@ -145,7 +145,7 @@ export default {
   /********************************************************************************************************************
    * 토큰의 모든 토픽 구독 해제
    * ******************************************************************************************************************/
-  async unsubscribeTokensFromAllTopic(os: TFcmToken$Os, tokens: string[]) {
+  async unsubscribeTokensFromAllTopic(os: FcmTokenOs, tokens: string[]) {
     if (notEmpty(tokens)) {
       const topics = Topic.getTopicsByOs(os);
       for (const topic of topics) {
@@ -189,7 +189,7 @@ export default {
       const tokenOs = list.reduce((acc, { id, os }) => {
         acc[id] = os;
         return acc;
-      }, {} as Dict<TFcmToken$Os>);
+      }, {} as Dict<FcmTokenOs>);
 
       const defaultMessage = this._makeMessage(title, body, data);
       const messages = list.map<TokenMessage>(({ id }) => ({ token: id, ...defaultMessage }));

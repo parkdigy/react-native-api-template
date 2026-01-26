@@ -3,14 +3,13 @@
  * ******************************************************************************************************************/
 
 import { Param_Enum_Required } from '@common_param';
-import { TUser } from '@db_models';
+import { type TUser } from '@db_models';
 
 /** 로그인 데이터 생성을 위한 회원 정보 구조 */
-export interface MakeLoginDataUserInfo
-  extends Pick<
-    TUser,
-    'id' | 'user_key' | 'uuid' | 'email' | 'nickname' | 'name' | 'reg_type' | 'is_push_notification'
-  > {}
+export interface MakeLoginDataUserInfo extends Pick<
+  TUser,
+  'id' | 'user_key' | 'uuid' | 'email' | 'nickname' | 'name' | 'reg_type' | 'is_push_notification'
+> {}
 
 export const AuthMakeLoginData = async (req: MyRequest, user?: MakeLoginDataUserInfo) => {
   const { _os_ } = param(req, { _os_: Param_Enum_Required(['ios', 'aos']) });

@@ -4,21 +4,16 @@
  * ******************************************************************************************************************/
 
 import { Knex } from 'knex';
-import { TableInsertData, TableUpdateData } from '@db_models_types';
-import { makeEnum } from '@db_models_util';
-import { TUser } from '../User';
-
-/** OS */
-const Os = { A: 'Android', I: 'Ios' };
-export type TFcmToken$Os = keyof typeof Os;
-export const TFcmToken$Os = makeEnum('os', Os, { A: 'Android', I: 'Ios' });
+import { type TableInsertData, type TableUpdateData } from '@db_models_types';
+import { type TUser } from '../User';
+import type { FcmTokenOs } from '@const';
 
 export interface TFcmToken {
   /** Primary Key */
   id: string; // FCM 토큰 // max:200
   /** Others */
   user_id: TUser['id']; // 회원 ID
-  os: TFcmToken$Os; // OS
+  os: FcmTokenOs; // OS
   os_version: string; // OS 버전 // max:20
   build_number: string; // 앱 빌드번호 // max:20
   device_model: string; // 기기 모델명 // max:50
@@ -34,7 +29,7 @@ export type TFcmToken$UpdateData = TableUpdateData<
   'update_date'
 >;
 
-export default TFcmToken;
+export type { TFcmToken as default };
 
 declare module 'knex/types/tables' {
   interface Tables {

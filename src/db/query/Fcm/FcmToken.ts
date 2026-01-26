@@ -4,13 +4,13 @@
 
 import { MySqlQuery } from '@db_query_common';
 import { Knex } from 'knex';
-import { TFcmToken$Os } from '@db_models';
+import { FcmTokenOs } from '@const';
 
 const tableName: Knex.TableNames = 'fcm_token';
 type tableName = typeof tableName;
 
 export default class FcmToken extends MySqlQuery<tableName> {
-  Os = TFcmToken$Os;
+  Os = FcmTokenOs;
 
   constructor() {
     super(tableName);
@@ -24,7 +24,7 @@ export default class FcmToken extends MySqlQuery<tableName> {
     req: MyRequest,
     id: string,
     userId: number,
-    os: TFcmToken$Os,
+    os: FcmTokenOs,
     osVersion: string,
     buildNumber: string,
     deviceModel: string,

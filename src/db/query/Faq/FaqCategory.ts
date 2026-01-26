@@ -4,13 +4,13 @@
 
 import { MySqlQuery } from '@db_query_common';
 import { Knex } from 'knex';
-import { TFaqCategory$Status } from '@db_models';
+import { FaqCategoryStatus } from '@const';
 
 const tableName: Knex.TableNames = 'faq_category';
 type tableName = typeof tableName;
 
 export default class FaqCategory extends MySqlQuery<tableName> {
-  Status = TFaqCategory$Status;
+  Status = FaqCategoryStatus;
 
   constructor() {
     super(tableName);

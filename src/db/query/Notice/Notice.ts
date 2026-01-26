@@ -4,13 +4,13 @@
 
 import { MySqlQuery } from '@db_query_common';
 import { Knex } from 'knex';
-import { TNotice$Status } from '@db_models';
+import { NoticeStatus } from '@const';
 
 const tableName: Knex.TableNames = 'notice';
 type tableName = typeof tableName;
 
 export default class Notice extends MySqlQuery<tableName> {
-  Status = TNotice$Status;
+  Status = NoticeStatus;
 
   constructor() {
     super(tableName);

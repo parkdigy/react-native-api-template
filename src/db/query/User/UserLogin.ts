@@ -4,13 +4,13 @@
 
 import { MySqlQuery } from '@db_query_common';
 import { Knex } from 'knex';
-import { TUserLogin$Os } from '@db_models';
+import { UserLoginOs } from '@const';
 
 const tableName: Knex.TableNames = 'user_login';
 type tableName = typeof tableName;
 
 export default class UserLogin extends MySqlQuery<tableName> {
-  Os = TUserLogin$Os;
+  Os = UserLoginOs;
 
   constructor() {
     super(tableName);

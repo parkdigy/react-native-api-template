@@ -4,13 +4,13 @@
 
 import { MySqlQuery } from '@db_query_common';
 import { Knex } from 'knex';
-import { TUserLoginSns$Type } from '@db_models';
+import { UserLoginSnsType } from '@const';
 
 const tableName: Knex.TableNames = 'user_login_sns';
 type tableName = typeof tableName;
 
 export default class UserLoginSns extends MySqlQuery<tableName> {
-  Type = TUserLoginSns$Type;
+  Type = UserLoginSnsType;
 
   constructor() {
     super(tableName);
@@ -20,7 +20,7 @@ export default class UserLoginSns extends MySqlQuery<tableName> {
    * 정보
    * ******************************************************************************************************************/
 
-  info(req: MyRequest, type: TUserLoginSns$Type, snsUserId: string) {
+  info(req: MyRequest, type: UserLoginSnsType, snsUserId: string) {
     return this.find(req, { type, sns_user_id: snsUserId }).select(
       'sns_access_token',
       'sns_access_token_exp',

@@ -1,11 +1,10 @@
 /********************************************************************************************************************
- * 회원 상태
+ * FAQ 상태
  * ******************************************************************************************************************/
 
-export const UserStatus = makeConst([
-  ['ON', '사용'],
-  ['OFF', '미사용'],
-  ['LOCK', '잠금'],
+export const FaqStatus = makeConst([
+  ['ON', '노출'],
+  ['OFF', '숨김'],
 ]);
 
-export type UserStatus = typeof UserStatus.Type;
+export type FaqStatus = typeof FaqStatus.Type;

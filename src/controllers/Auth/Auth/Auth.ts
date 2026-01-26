@@ -5,7 +5,7 @@
 import { Param_Boolean, Param_String } from '@common_param';
 import { AuthSignIn, AuthMakeLoginData } from './methods';
 import dayjs from 'dayjs';
-import { TUser$UpdateData, TUserLoginSns } from '@db_models';
+import { type TUser$UpdateData, type TUserLoginSns } from '@db_models';
 
 export default {
   ...AuthSignIn, // 로그인

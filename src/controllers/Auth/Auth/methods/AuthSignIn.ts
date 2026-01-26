@@ -6,7 +6,7 @@ import AuthMakeLoginData from './AuthMakeLoginData';
 import { Param_Date, Param_Enum_Required, Param_String, Param_String_Required } from '@common_param';
 import NickNamePrefix from './nickname_prefix_words.json';
 import NickNameAnimal from './nickname_animal_words.json';
-import { TUser$UpdateData } from '@db_models';
+import { type TUser$UpdateData } from '@db_models';
 
 const makeNickname = () => {
   const prefix = NickNamePrefix[Math.floor(Math.random() * NickNamePrefix.length)];
