@@ -23,6 +23,15 @@ CREATE TABLE `data_key` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `device` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `manufacturer` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `create_date` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 DROP TABLE IF EXISTS `faq`;
 CREATE TABLE `faq` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
